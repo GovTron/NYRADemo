@@ -1,9 +1,9 @@
 #!/bin/bash
 set -x
 # Source: https://learn.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage?tabs=azure-cli
-RESOURCE_GROUP_NAME=terraform
-STORAGE_ACCOUNT_NAME=nyragovtrontf
-CONTAINER_NAME=tfstate
+RESOURCE_GROUP_NAME=terraform2
+STORAGE_ACCOUNT_NAME=nyragovtrontf2
+CONTAINER_NAME=tfstate2
 
 # Create resource group
 az group create --name $RESOURCE_GROUP_NAME --location eastus
