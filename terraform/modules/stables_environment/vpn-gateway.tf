@@ -23,6 +23,7 @@ resource "azurerm_vpn_server_configuration" "ingress_vpn_config" {
     issuer = "https://sts.windows.net/aab67cdb-fd03-41d3-9ee1-5fec203fb36e/"
     audience = "c632b3df-fb67-4d84-bdcf-b95ad541b5c8"
   }
+  vpn_protocols = ["OpenVPN"]
 }
 
 

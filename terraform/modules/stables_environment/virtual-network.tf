@@ -77,3 +77,50 @@ resource "azurerm_firewall" "waf" {
     public_ip_address_id = azurerm_public_ip.main_waf.id
   }
 }
+
+resource "azurerm_route_table" "allow_internet_access_via_nat_gateway" {
+  name                = "default-route-table"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+    route {
+      name                = "default-route"
+      address_prefix      = "0.0.0.0/0"
+      next_hop_type       = "VirtualAppliance"
+      next_hop_in_ip_address = azurerm_firewall.waf.ip_configuration.0.private_ip_address
+    }
+}
+
+
+resource "azurerm_nat_gateway" "main_outlet" {
+  name                    = "nat-gateway"
+  location                = azurerm_resource_group.main.location
+  resource_group_name     = azurerm_resource_group.main.name
+  sku_name                = "Standard"
+  idle_timeout_in_minutes = 10
+  zones                   = ["1"]
+}
+
+
+resource "azurerm_public_ip" "nat_gateway_ip" {
+  name                = "nat-gateway-ip"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  zones = ["1"]
+}
+
+
+resource "azurerm_nat_gateway_public_ip_association" "nat_gateway_ip_assoc" {
+  nat_gateway_id       = azurerm_nat_gateway.main_outlet.id
+  public_ip_address_id = azurerm_public_ip.nat_gateway_ip.id
+}
+
+
+resource "azurerm_subnet_nat_gateway_association" "firewall_subnet_nat_gateway_association" {
+  subnet_id      = azurerm_subnet.firewall_subnet.id
+  nat_gateway_id = azurerm_nat_gateway.main_outlet.id
+  
+}
+
+
