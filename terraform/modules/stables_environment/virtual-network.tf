@@ -78,6 +78,29 @@ resource "azurerm_firewall" "waf" {
   }
 }
 
+resource "azurerm_firewall_network_rule_collection" "allow_egress" {
+  name                = "allow-egress"
+  resource_group_name = azurerm_resource_group.main.name
+  azure_firewall_name = azurerm_firewall.waf.name
+  priority            = 100
+  action              = "Allow"
+
+  rule {
+    name                     = "allow-egress"
+    protocols = [
+      "TCP",
+      "UDP",
+    ]
+    destination_addresses = [
+      "*"
+    ]
+    
+    source_addresses            = azurerm_virtual_network.main_network.address_space
+      destination_ports   = ["*"]
+    
+  }
+}
+
 resource "azurerm_route_table" "allow_internet_access_via_nat_gateway" {
   name                = "default-route-table"
   resource_group_name = azurerm_resource_group.main.name
